@@ -39,13 +39,15 @@
                                     <td>{{ $category->id }}</td>
                                     <td>{{ $category->name }}</td>
                                     <td>
-                                        <a href="{{ route('categories.edit', ['id' => $category->id]) }}" class="btn btn-success mx-2">Edit</a>
+                                        
+                                        <a href="{{ route('categories.edit', ['category' => $category->id]) }}" class="btn btn-success mx-2">Edit</a>
                                         <a href="{{ route('categories.delete', ['id' => $category->id]) }}" class="btn btn-danger mx-2" onclick="return confirm('Are you sure?')">Delete</a>
                                     </td>
                                 </tr>
                                 @endforeach
                             </tbody>
                         </table>
+                        {{ $categories->links() }}
                     </div>
                 </div>
             </div>

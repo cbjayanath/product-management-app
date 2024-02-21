@@ -8,7 +8,7 @@
                 @endif
                 <div class="card">
                     <div class="card-header">
-                        <h4>Add Categories
+                        <h4>Add Category
                             <a href="{{ url('categories') }}" class="btn btn-primary float-end">Back</a>
                         </h4>
                     </div>

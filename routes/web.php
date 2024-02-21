@@ -1,6 +1,8 @@
 <?php
 
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\ProductController;
+use App\Http\Controllers\CategoryController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -17,18 +19,24 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', function () {
     return view('welcome');
 });
-
+//Category Routes
 Route::get('categories', 'App\Http\Controllers\CategoryController@index')->name('categories.index');
-
 Route::get('categories/create', 'App\Http\Controllers\CategoryController@create')->name('categories.create');
-
 Route::post('categories/create', 'App\Http\Controllers\CategoryController@store')->name('categories.store');
-
 Route::get('categories/edit/{id}', 'App\Http\Controllers\CategoryController@edit')->name('categories.edit');
-
 Route::put('categories/edit/{id}', 'App\Http\Controllers\CategoryController@update')->name('categories.update');
-
 Route::get('categories/delete/{id}', 'App\Http\Controllers\CategoryController@destroy')->name('categories.delete');
+
+//Product Routes 
+Route::get('products', 'App\Http\Controllers\ProductController@index')->name('products.index');
+Route::get('products/create', 'App\Http\Controllers\ProductController@create')->name('products.create');
+Route::post('products/create', 'App\Http\Controllers\ProductController@store')->name('products.store');
+Route::get('products/edit/{id}', 'App\Http\Controllers\ProductController@edit')->name('products.edit');
+Route::put('products/edit/{id}', 'App\Http\Controllers\ProductController@update')->name('products.update');
+Route::get('products/delete/{id}', 'App\Http\Controllers\ProductController@destroy')->name('products.delete');
+
+//search product
+Route::get('/search', 'App\Http\Controllers\ProductController@search')->name('products.search');
 
 Route::get('/dashboard', function () {
     return view('dashboard');
@@ -38,6 +46,12 @@ Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+
+});
+
+Route::middleware(['auth', 'is_admin'])->group(function () {
+    Route::resource('/categories', CategoryController::class); //granting permisssion for category section 
+    
 });
 
 require __DIR__ . '/auth.php';

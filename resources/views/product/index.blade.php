@@ -41,7 +41,7 @@
                                     <th>Price</th>
                                     <th>Created By</th>
                                     {{-- disable if user has no permission --}}
-                                    @if(auth()->check() && auth()->user()->is_admin)<th>Action</th>@endif 
+                                    @if(auth()->check() && auth()->user()->is_admin)<th>Action</th>@endif
                                 </tr>
                             </thead>
                             <tbody>
@@ -60,22 +60,25 @@
                                     <td>{{ $product->display_order_no }}</td>
                                     <td>{{ $product->price }}</td>
                                     <td>{{ $product->creator->name}}</td>
-                                    @if(auth()->check() && auth()->user()->is_admin)  {{-- disable if user has no permission --}}
+                                    @if(auth()->check() && auth()->user()->is_admin) {{-- disable if user has no permission --}}
                                     <td>
-                                        <a href="{{ route('products.edit', ['id' => $product->id]) }}"
+                                        <a href="{{ route('products.edit', ['product' => $product->id]) }}"
                                             class="btn btn-success mx-2">Edit</a>
-                                        <a href="{{ route('products.delete', ['id' => $product->id]) }}"
-                                            class="btn btn-danger mx-2"
-                                            onclick="return confirm('Are you sure?')">Delete</a>
+                                        <form action="{{ route('products.destroy', ['product' => $product->id]) }}"
+                                            method="POST" style="display: inline;">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit" class="btn btn-danger mx-2"
+                                                onclick="return confirm('Are you sure?')">Delete</button>
+                                        </form>
                                     </td>
                                     @endif
-
                                 </tr>
                                 @endforeach
 
                             </tbody>
                         </table>
-                        {{ $products->links() }}  {{-- set pagination --}}
+                        {{ $products->links() }} {{-- set pagination --}}
                     </div>
                 </div>
             </div>

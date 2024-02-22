@@ -21,12 +21,12 @@ Route::get('/', function () {
 });
 
 //Product Routes 
-Route::get('products', 'App\Http\Controllers\ProductController@index')->name('products.index');
-Route::get('products/create', 'App\Http\Controllers\ProductController@create')->name('products.create');
-Route::post('products/create', 'App\Http\Controllers\ProductController@store')->name('products.store');
-Route::get('products/edit/{id}', 'App\Http\Controllers\ProductController@edit')->name('products.edit');
-Route::put('products/edit/{id}', 'App\Http\Controllers\ProductController@update')->name('products.update');
-Route::get('products/delete/{id}', 'App\Http\Controllers\ProductController@destroy')->name('products.delete');
+// Route::get('products', 'App\Http\Controllers\ProductController@index')->name('products.index');
+// Route::get('products/create', 'App\Http\Controllers\ProductController@create')->name('products.create');
+// Route::post('products/create', 'App\Http\Controllers\ProductController@store')->name('products.store');
+// Route::get('products/edit/{id}', 'App\Http\Controllers\ProductController@edit')->name('products.edit');
+// Route::put('products/edit/{id}', 'App\Http\Controllers\ProductController@update')->name('products.update');
+// Route::get('products/delete/{id}', 'App\Http\Controllers\ProductController@destroy')->name('products.delete');
 
 //search product
 Route::get('/search', 'App\Http\Controllers\ProductController@search')->name('products.search');
@@ -44,7 +44,7 @@ Route::middleware('auth')->group(function () {
 
 Route::middleware(['auth', 'is_admin'])->group(function () {
     Route::resource('/categories', CategoryController::class); //granting permisssion for category section 
-    
+    Route::resource('/products', ProductController::class);
 });
 
 require __DIR__ . '/auth.php';

@@ -19,13 +19,6 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', function () {
     return view('welcome');
 });
-//Category Routes
-Route::get('categories', 'App\Http\Controllers\CategoryController@index')->name('categories.index');
-Route::get('categories/create', 'App\Http\Controllers\CategoryController@create')->name('categories.create');
-Route::post('categories/create', 'App\Http\Controllers\CategoryController@store')->name('categories.store');
-Route::get('categories/edit/{id}', 'App\Http\Controllers\CategoryController@edit')->name('categories.edit');
-Route::put('categories/edit/{id}', 'App\Http\Controllers\CategoryController@update')->name('categories.update');
-Route::get('categories/delete/{id}', 'App\Http\Controllers\CategoryController@destroy')->name('categories.delete');
 
 //Product Routes 
 Route::get('products', 'App\Http\Controllers\ProductController@index')->name('products.index');

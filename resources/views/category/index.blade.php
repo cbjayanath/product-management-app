@@ -26,7 +26,12 @@
                                     <td>
                                         
                                         <a href="{{ route('categories.edit', ['category' => $category->id]) }}" class="btn btn-success mx-2">Edit</a>
-                                        <a href="{{ route('categories.delete', ['id' => $category->id]) }}" class="btn btn-danger mx-2" onclick="return confirm('Are you sure?')">Delete</a>
+                                        <form action="{{ route('categories.destroy', ['category' => $category->id]) }}" method="POST" style="display: inline;">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit" class="btn btn-danger mx-2" onclick="return confirm('Are you sure?')">Delete</button>
+                                        </form>
+
                                     </td>
                                 </tr>
                                 @endforeach

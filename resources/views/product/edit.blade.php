@@ -13,7 +13,7 @@
                         </h4>
                     </div>
                     <div class="card-body">
-                        <form action="{{ route('products.update', ['product' => $product->id])  }}" method="POST" enctype="multipart/form-data">
+                        <form action="{{ route('products.update', ['id' => $product->id])  }}" method="POST" enctype="multipart/form-data">
                             @csrf
                             @method('PUT')
                             <div class="mb-3">

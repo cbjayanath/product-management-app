@@ -60,17 +60,13 @@
                                     <td>{{ $product->display_order_no }}</td>
                                     <td>{{ $product->price }}</td>
                                     <td>{{ $product->creator->name}}</td>
-                                    @if(auth()->check() && auth()->user()->is_admin) {{-- disable if user has no permission --}}
+                                    @if(auth()->check() && auth()->user()->is_admin) {{-- disable if user has no
+                                    permission --}}
                                     <td>
-                                        <a href="{{ route('products.edit', ['product' => $product->id]) }}"
+                                        <a href="{{ route('products.edit', ['id' => $product->id]) }}"
                                             class="btn btn-success mx-2">Edit</a>
-                                        <form action="{{ route('products.destroy', ['product' => $product->id]) }}"
-                                            method="POST" style="display: inline;">
-                                            @csrf
-                                            @method('DELETE')
-                                            <button type="submit" class="btn btn-danger mx-2"
-                                                onclick="return confirm('Are you sure?')">Delete</button>
-                                        </form>
+                                        <a href="{{ route('products.delete',['id' => $product->id]) }}" class="btn btn-danger" onclick="return confirm('Are you sure?')">
+                                            Delete</a>
                                     </td>
                                     @endif
                                 </tr>

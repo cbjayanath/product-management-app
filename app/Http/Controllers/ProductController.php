@@ -42,45 +42,42 @@ class ProductController extends Controller
 
     public function store(Request $request)
     {
-        $request->validate([ //validate when storing
+        $validateData = $request->validate([ //validate when storing
             'name' => 'required|max:255|string',
             'code' => 'required|max:255',
             'description' => 'nullable|max:255|string',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg',
-            'category_id' => 'required',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,svg',
+            'category_id' => 'required|exists:categories,id',
             'display_order_no' => 'required|numeric',
             'price' => 'required|numeric',
 
         ]);
 
-        if ($request->has('image')) { 
+        if ($request->has('image')) {
             $file = $request->file('image');
             $extension = $file->getClientOriginalExtension();
             $file_name = time() . '.' . $extension;
             $path = 'uploads/products/';
             $file->move($path, $file_name);  //set file path with file name
         }
-        
-        $existingProductsWithSameOrder = Product::where('display_order_no', $request->display_order_no)->get();
-        if ($existingProductsWithSameOrder->isNotEmpty()) {
-            // Increment display_order_no for existing products with the same order
-            foreach ($existingProductsWithSameOrder as $existingProduct) {
-                $existingProduct->update(['display_order_no' => $existingProduct->display_order_no + 1]);
-            }
-        }
 
-        Product::create([ //saving product data
-            'name' => $request->name,
-            'code' => $request->code,
-            'description' => $request->description,
-            'image' => isset($file_name) ? $file_name : '',
-            'category_id' => $request->category_id,
-            'display_order_no' => $request->display_order_no,
-            'price' => $request->price,
-            'created_by' => Auth::user()->id
-        ]);
+        $product = new Product();
+        $product->name = $validateData['name'];
+        $product->code = $validateData['code'];
+        $product->description = $validateData['description'];
+        $product->category_id = $validateData['category_id'];
+        $product->display_order_no = $validateData['display_order_no'];
+        $product->price = $validateData['price'];
+        $product->image = isset($file_name) ? $file_name : '';
+        $product->created_by = Auth::user()->id;
+        $product->save();
+
+        Product::where('display_order_no', '>=', $validateData['display_order_no'])
+            ->where('id', '<>', $product->id)
+            ->increment('display_order_no');
 
         return redirect()->route('products.create')->with('success', 'Product Created  Successfully!');
+
     }
 
     public function edit(int $id)
@@ -93,12 +90,12 @@ class ProductController extends Controller
     }
     public function update(Request $request, int $id)
     {
-        $request->validate([
+        $validateData = $request->validate([
             'name' => 'required|max:255|string',
             'code' => 'required|max:255',
             'description' => 'nullable|max:255|string',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg',
-            'category_id' => 'required',
+            'category_id' => 'required|exists:categories,id',
             'display_order_no' => 'required|numeric',
             'price' => 'required|numeric',
 
@@ -115,29 +112,33 @@ class ProductController extends Controller
             if (File::exists($product->image)) { //delete existing image when upload new one
                 File::delete($product->image);
             }
+            $product->image = $file_name;
         }
-        if ($product->display_order_no != $request->display_order_no) {// Check if the display_order_no is changing
-           
-            $existingProductsWithSameOrder = Product::where('display_order_no', $request->display_order_no)->get();
-            if ($existingProductsWithSameOrder->isNotEmpty()) {
-                // Increment display_order_no for existing products with the same order
-                foreach ($existingProductsWithSameOrder as $existingProduct) {
-                    $existingProduct->update(['display_order_no' => $existingProduct->display_order_no + 1]);
-                }
+        $oldDisplayOrder = $product->display_order_no;
+        $newDisplayOrder = $request->input('display_order_no');
+
+        // changing display order numbers 
+        if ($oldDisplayOrder !== $newDisplayOrder) {
+            if ($newDisplayOrder > $oldDisplayOrder) {
+                Product::where('display_order_no', '>', $oldDisplayOrder)
+                    ->where('display_order_no', '<=', $newDisplayOrder)
+                    ->decrement('display_order_no');
+            } else {
+                Product::where('display_order_no', '<', $oldDisplayOrder)
+                    ->where('display_order_no', '>=', $newDisplayOrder)
+                    ->increment('display_order_no');
             }
         }
 
-       
-        $product->update([
-            'name' => $request->name,
-            'code' => $request->code,
-            'description' => $request->description,
-            'image' => isset($file_name) ? $file_name : '',
-            'category_id' => $request->category_id,
-            'display_order_no' => $request->display_order_no,
-            'price' => $request->price,
-            'created_by' => Auth::user()->id
-        ]);
+        $product->name = $validateData['name'];
+        $product->code = $validateData['code'];
+        $product->description = $validateData['description'];
+        $product->category_id = $validateData['category_id'];
+        $product->display_order_no = $validateData['display_order_no'];
+        $product->price = $validateData['price'];
+        $product->created_by = Auth::user()->id;
+        $product->update();
+
         return redirect()->route('products.create')->with('success', 'Product Updated  Successfully!');
     }
     public function destroy(int $id)
